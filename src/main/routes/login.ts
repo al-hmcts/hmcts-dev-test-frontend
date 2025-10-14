@@ -6,7 +6,10 @@ export default function (app: Application): void {
 
   app.get('/', async (req, res) => {
     try {
-       res.render('login', {});
+      if((req.session as any).authToken) {
+        return res.redirect('/tasks');
+      }
+      res.render('login', {});
     } catch (error) {
       console.error('Error making request:', error);
       res.render('login', {});
