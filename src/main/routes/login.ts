@@ -1,8 +1,11 @@
-import { Application } from 'express';
-import { LoginClient } from '../api/LoginClient';
+import { Application, Request} from "express";
+
+// Retrieve login client setup from middleware
+function getLoginClient(req: Request) {
+  return (req as any).clients?.login;
+}
 
 export default function (app: Application): void {
-  const apiClient = new LoginClient('http://localhost:4000');
 
   app.get('/', async (req, res) => {
     try {
@@ -12,14 +15,15 @@ export default function (app: Application): void {
       res.render('login', {});
     } catch (error) {
       console.error('Error making request:', error);
-      res.render('login', {});
+      res.render('error', {});
     }
 
   });
 
   app.post('/login', async (req, res) => {
     try {
-      const token = await apiClient.login({ username: 'admin', password: 'password' });
+      const loginClient = getLoginClient(req);
+      const token = await loginClient.login({ username: 'admin', password: 'password' });
        // store in session
        (req.session as any).authToken = token;
 
@@ -27,7 +31,22 @@ export default function (app: Application): void {
        res.redirect("/tasks");
     } catch (error) {
       console.error('Error making request:', error);
-      res.render('home', {});
+      res.render('error', {});
+    }
+  });
+
+  app.get('/logout', async (req, res) => {
+    try {
+      const loginClient = getLoginClient(req);
+      loginClient.logout();
+
+      // clear token 
+      (req.session as any).authToken = null;
+
+      return res.redirect('/');
+    } catch (error) {
+      console.error('Error making request:', error);
+      res.render('error', {});
     }
   });
 }

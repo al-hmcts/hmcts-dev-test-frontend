@@ -24,6 +24,7 @@ export default function (app: Application): void {
       res.render("all-tasks", { items: tasks });
     } catch (err) {
       next(err);
+      res.render('error', {});
     }
   });
 
@@ -49,6 +50,7 @@ export default function (app: Application): void {
       res.redirect("/tasks");
     } catch (err) {
       next(err);
+      res.render('error', {});
     }
   });
 
@@ -61,6 +63,7 @@ export default function (app: Application): void {
       res.render("add-task", { task, errors: [] });
     } catch (err) {
       next(err);
+      res.render('error', {});
     }
   });
 
@@ -82,6 +85,7 @@ export default function (app: Application): void {
       res.redirect("/tasks");
     } catch (err) {
       next(err);
+      res.render('error', {});
     }
   });
 
@@ -94,6 +98,7 @@ export default function (app: Application): void {
       res.render("delete-task", { task });
     } catch (err) {
       next(err);
+      res.render('error', {});
     }
   });
 
@@ -106,6 +111,7 @@ export default function (app: Application): void {
       res.redirect("/tasks");
     } catch (err) {
       next(err);
+      res.render('error', {});
     }
   });
 }
